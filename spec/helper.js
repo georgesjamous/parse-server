@@ -295,6 +295,15 @@ function createTestUser() {
   return user.signUp();
 }
 
+function random(len = 10) {
+  let text = '';
+  const possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < len; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
+
 // Shims for compatibility with the old qunit tests.
 function ok(bool, message) {
   expect(bool).toBeTruthy(message);
@@ -407,6 +416,7 @@ global.mockFacebookAuthenticator = mockFacebookAuthenticator;
 global.jfail = function(err) {
   fail(JSON.stringify(err));
 };
+global.random = random;
 
 global.it_exclude_dbs = excluded => {
   if (excluded.indexOf(process.env.PARSE_SERVER_TEST_DB) >= 0) {

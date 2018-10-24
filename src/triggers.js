@@ -31,7 +31,7 @@ const baseStore = function() {
 };
 
 function validateClassNameForTriggers(className, type) {
-  const restrictedClassNames = ['_Session'];
+  const restrictedClassNames = [];
   if (restrictedClassNames.indexOf(className) != -1) {
     throw `Triggers are not supported for ${className} class.`;
   }
@@ -515,6 +515,7 @@ export function maybeRunTrigger(
       triggerType,
       config.applicationId
     );
+    // console.warn('Trigger', parseObject.className);
     if (!trigger) return resolve();
     var request = getRequestObject(
       triggerType,
@@ -540,6 +541,7 @@ export function maybeRunTrigger(
         ) {
           Object.assign(context, request.context);
         }
+        console.warn('OBNJECT', object);
         resolve(object);
       },
       error => {
@@ -561,7 +563,9 @@ export function maybeRunTrigger(
     // to the RestWrite.execute() call.
     return Promise.resolve()
       .then(() => {
+        console.warn('Dirty before ?', parseObject.dirtyKeys());
         const promise = trigger(request);
+        console.warn('Dirty after ?', parseObject.dirtyKeys());
         if (
           triggerType === Types.afterSave ||
           triggerType === Types.afterDelete
@@ -575,7 +579,13 @@ export function maybeRunTrigger(
         }
         return promise;
       })
-      .then(success, error);
+      .then(resp => {
+        if (parseObject.className === '_Session') {
+          resolve();
+        } else {
+          success(resp);
+        }
+      }, error);
   });
 }
 

@@ -205,7 +205,7 @@ RestWrite.prototype.runBeforeTrigger = function() {
   ) {
     return Promise.resolve();
   }
-
+  // console.warn('trigger exists on ', this.className);
   // Cloud code gets a bit of extra data for its objects
   var extraData = { className: this.className };
   if (this.query && this.query.objectId) {
@@ -221,6 +221,12 @@ RestWrite.prototype.runBeforeTrigger = function() {
 
   return Promise.resolve()
     .then(() => {
+      // console.warn(
+      //   'maybe running trigger ',
+      //   this.className,
+      //   updatedObject,
+      //   originalObject
+      // );
       return triggers.maybeRunTrigger(
         triggers.Types.beforeSave,
         this.auth,
@@ -1495,6 +1501,8 @@ RestWrite.prototype.sanitizedData = function() {
 
 // Returns an updated copy of the object
 RestWrite.prototype.buildUpdatedObject = function(extraData) {
+  // console.warn('extraData', extraData);
+  // console.warn('originalData', this.originalData);
   const updatedObject = triggers.inflate(extraData, this.originalData);
   Object.keys(this.data).reduce(function(data, key) {
     if (key.indexOf('.') > 0) {
@@ -1511,8 +1519,8 @@ RestWrite.prototype.buildUpdatedObject = function(extraData) {
     }
     return data;
   }, deepcopy(this.data));
-
   updatedObject.set(this.sanitizedData());
+  // console.warn('updatedObject', updatedObject.toJSON());
   return updatedObject;
 };
 
