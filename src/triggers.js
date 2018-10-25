@@ -290,7 +290,7 @@ export function getResponseObject(request, resolve, reject) {
         isTriggerReadonlyForClass(request.object.className) &&
         request.triggerName === Types.beforeDelete
       ) {
-        return Promise.resolve(resolve());
+        return resolve();
       }
       if (error instanceof Parse.Error) {
         reject(error);
