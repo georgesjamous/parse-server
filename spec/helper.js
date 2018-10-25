@@ -3,7 +3,7 @@
 const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 const supportsColor = require('supports-color');
 jasmine.DEFAULT_TIMEOUT_INTERVAL =
-  process.env.PARSE_SERVER_TEST_TIMEOUT || 5000;
+  process.env.PARSE_SERVER_TEST_TIMEOUT || 8000;
 
 jasmine.getEnv().clearReporters();
 jasmine.getEnv().addReporter(
