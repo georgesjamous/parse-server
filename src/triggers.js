@@ -11,6 +11,11 @@ export const Types = {
   afterFind: 'afterFind',
 };
 
+export const ReadonlyClasses = ['_Session'];
+export const isReadonlyTrigger = function(className) {
+  return ReadonlyClasses.indexOf(className) != -1;
+};
+
 const baseStore = function() {
   const Validators = {};
   const Functions = {};

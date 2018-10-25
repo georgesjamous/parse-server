@@ -205,15 +205,20 @@ RestWrite.prototype.runBeforeTrigger = function() {
   ) {
     return Promise.resolve();
   }
-  // console.warn('trigger exists on ', this.className);
-  // Cloud code gets a bit of extra data for its objects
+
   var extraData = { className: this.className };
   if (this.query && this.query.objectId) {
     extraData.objectId = this.query.objectId;
   }
 
+  let updatedObject = null;
   let originalObject = null;
-  const updatedObject = this.buildUpdatedObject(extraData);
+  // readonly trigger
+  if (triggers.isReadonlyTrigger(this.className)) {
+    updatedObject = triggers.inflate(extraData, {});
+  } else {
+    updatedObject = this.buildUpdatedObject(extraData);
+  }
   if (this.query && this.query.objectId) {
     // This is an update for existing object.
     originalObject = triggers.inflate(extraData, this.originalData);
@@ -1499,6 +1504,17 @@ RestWrite.prototype.sanitizedData = function() {
   return Parse._decode(undefined, data);
 };
 
+RestWrite.prototype.removeReadonlyKeys = function(data) {
+  const readonlyKeys = Parse.Session.readOnlyAttributes();
+  const sdata = Object.keys(data).reduce((data, key) => {
+    if (readonlyKeys.indexOf(key) !== -1) {
+      delete data[key];
+    }
+    return data;
+  }, deepcopy(data));
+  return Parse._decode(undefined, sdata);
+};
+
 // Returns an updated copy of the object
 RestWrite.prototype.buildUpdatedObject = function(extraData) {
   // console.warn('extraData', extraData);
@@ -1519,8 +1535,10 @@ RestWrite.prototype.buildUpdatedObject = function(extraData) {
     }
     return data;
   }, deepcopy(this.data));
-  updatedObject.set(this.sanitizedData());
-  // console.warn('updatedObject', updatedObject.toJSON());
+  const sdata = this.sanitizedData();
+  // const sdata1 = this.removeReadonlyKeys(sdata);
+  // console.warn('sdata', sdata1);
+  updatedObject.set(sdata);
   return updatedObject;
 };
 

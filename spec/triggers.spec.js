@@ -2057,16 +2057,22 @@ describe('Cloud Code', () => {
 
   it('beforeSave on session should be read only', async () => {
     // temporary
-    Parse.Object.deregisterSubclass('_Session');
+    // Parse.Object.deregisterSubclass('_Session');
     Parse.Cloud.beforeSave('_Session', function(req) {
-      console.log('Seting a foo');
-      req.object.set('afoo', 'abazz');
-      throw 'ERRROR CANNOT BITCH';
+      console.log('Seting a foo on object ', req.object);
+      console.log('original object ', req.original);
+      console.log('req dirty object ', req.object.dirtyKeys());
+      console.log('req USER ', req.object.get('objectId'));
+      // console.log('req dirty original ', req.original.dirtyKeys);
+      // req.object.set('afoo', 'abazz');
+      // throw 'ERRROR CANNOT BITCH';
     });
     const user = new Parse.User();
     user.set('username', random());
     user.set('password', 'qwerty');
     await user.signUp();
+    user.set('minou', 'hein ?');
+    await user.save({}, { useMasterKey: true });
     expect(user.id).toBeDefined();
     const query = new Parse.Query('_Session');
     query.equalTo('user', user);

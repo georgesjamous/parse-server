@@ -97,17 +97,5 @@
     "type": "opencollective",
     "url": "https://opencollective.com/parse-server",
     "logo": "https://opencollective.com/parse-server/logo.txt?reverse=true&variant=binary"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "{src,spec}/**/*.js": [
-      "prettier --write",
-      "eslint --cache",
-      "git add"
-    ]
   }
 }
