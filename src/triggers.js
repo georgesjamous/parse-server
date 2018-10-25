@@ -286,12 +286,12 @@ export function getResponseObject(request, resolve, reject) {
     },
     error: function(error) {
       // if readonly and beforeDelete. Ignore error.
-      // if (
-      //   isTriggerReadonlyForClass(request.object.className) &&
-      //   request.triggerName === Types.beforeDelete
-      // ) {
-      //   return resolve();
-      // }
+      if (
+        isTriggerReadonlyForClass(request.object.className) === true &&
+        request.triggerName === Types.beforeDelete
+      ) {
+        return resolve();
+      }
       if (error instanceof Parse.Error) {
         reject(error);
       } else if (error instanceof Error) {
