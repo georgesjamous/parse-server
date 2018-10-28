@@ -9,10 +9,10 @@ jasmine.getEnv().clearReporters();
 jasmine.getEnv().addReporter(
   new SpecReporter({
     colors: {
-      enabled: supportsColor.stdout
+      enabled: supportsColor.stdout,
     },
     spec: {
-      displayDuration: true
+      displayDuration: true,
     },
   })
 );
@@ -149,9 +149,11 @@ const reconfigureServer = changedConfiguration => {
     }
     try {
       let parseServer = undefined;
-      const newConfiguration = Object.assign({},
+      const newConfiguration = Object.assign(
+        {},
         defaultConfiguration,
-        changedConfiguration, {
+        changedConfiguration,
+        {
           __indexBuildCompletionCallbackForTests: indexBuildPromise =>
             indexBuildPromise.then(() => {
               resolve(parseServer);
@@ -220,7 +222,7 @@ beforeEach(done => {
     .catch(done.fail);
 });
 
-afterEach(function (done) {
+afterEach(function(done) {
   const afterLogOut = () => {
     if (Object.keys(openConnections).length > 0) {
       fail(
@@ -352,14 +354,14 @@ function range(n) {
 
 function mockFacebookAuthenticator(id, token) {
   const facebook = {};
-  facebook.validateAuthData = function (authData) {
+  facebook.validateAuthData = function(authData) {
     if (authData.id === id && authData.access_token.startsWith(token)) {
       return Promise.resolve();
     } else {
       throw undefined;
     }
   };
-  facebook.validateAppId = function (appId, authData) {
+  facebook.validateAppId = function(appId, authData) {
     if (authData.access_token.startsWith(token)) {
       return Promise.resolve();
     } else {
@@ -376,17 +378,17 @@ function mockFacebook() {
 function mockShortLivedAuth() {
   const auth = {};
   let accessToken;
-  auth.setValidAccessToken = function (validAccessToken) {
+  auth.setValidAccessToken = function(validAccessToken) {
     accessToken = validAccessToken;
   };
-  auth.validateAuthData = function (authData) {
+  auth.validateAuthData = function(authData) {
     if (authData.access_token == accessToken) {
       return Promise.resolve();
     } else {
       return Promise.reject('Invalid access token');
     }
   };
-  auth.validateAppId = function () {
+  auth.validateAppId = function() {
     return Promise.resolve();
   };
   return auth;
@@ -409,7 +411,7 @@ global.range = range;
 global.reconfigureServer = reconfigureServer;
 global.defaultConfiguration = defaultConfiguration;
 global.mockFacebookAuthenticator = mockFacebookAuthenticator;
-global.jfail = function (err) {
+global.jfail = function(err) {
   fail(JSON.stringify(err));
 };
 
@@ -459,7 +461,7 @@ global.describe_only = validator => {
 };
 
 const libraryCache = {};
-jasmine.mockLibrary = function (library, name, mock) {
+jasmine.mockLibrary = function(library, name, mock) {
   const original = require(library)[name];
   if (!libraryCache[library]) {
     libraryCache[library] = {};
@@ -468,7 +470,7 @@ jasmine.mockLibrary = function (library, name, mock) {
   libraryCache[library][name] = original;
 };
 
-jasmine.restoreLibrary = function (library, name) {
+jasmine.restoreLibrary = function(library, name) {
   if (!libraryCache[library] || !libraryCache[library][name]) {
     throw 'Can not find library ' + library + ' ' + name;
   }
