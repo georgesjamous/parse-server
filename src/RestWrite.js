@@ -1495,7 +1495,7 @@ RestWrite.prototype.sanitizedData = function() {
 
 // Returns an updated copy of the object
 RestWrite.prototype.buildUpdatedObject = function(extraData) {
-  const updatedObject = triggers.inflate(extraData, this.originalData);
+  let updatedObject = triggers.inflate(extraData, this.originalData);
   Object.keys(this.data).reduce(function(data, key) {
     if (key.indexOf('.') > 0) {
       // subdocument key with dot notation ('x.y':v => 'x':{'y':v})
@@ -1511,8 +1511,12 @@ RestWrite.prototype.buildUpdatedObject = function(extraData) {
     }
     return data;
   }, deepcopy(this.data));
-
-  updatedObject.set(this.sanitizedData());
+  const sanitizedData = this.sanitizedData();
+  if (this.className !== '_Session') {
+    updatedObject.set(sanitizedData);
+  } else {
+    updatedObject = triggers.inflate(extraData, sanitizedData);
+  }
   return updatedObject;
 };
 

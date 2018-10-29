@@ -47,6 +47,12 @@ function validateClassNameForTriggers(className, type) {
     // TODO: Allow proper documented way of using nested increment ops
     throw 'Only afterSave is allowed on _PushStatus';
   }
+  if (
+    (type == Types.beforeFind || type == Types.afterFind) &&
+    className === '_Session'
+  ) {
+    throw 'beforeFind/afterFind is not allowed on _Session';
+  }
   return className;
 }
 
@@ -604,8 +610,8 @@ export function inflate(data, restObject) {
     typeof data == 'object'
       ? data
       : {
-          className: data,
-        };
+        className: data,
+      };
   for (var key in restObject) {
     copy[key] = restObject[key];
   }
